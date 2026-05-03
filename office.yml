@@ -1,0 +1,43 @@
+name: Office Download
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Prepare folder
+        run: mkdir C:\ODT
+
+      - name: Download ODT
+        run: |
+          Invoke-WebRequest "https://download.microsoft.com/download/2/7/0/270F0C0C-5F5C-4D3A-8E3F-5F6F6D0C6D5C/officedeploymenttool_16426-20258.exe" -OutFile "C:\ODT\odt.exe"
+          Start-Process "C:\ODT\odt.exe" -ArgumentList "/quiet /extract:C:\ODT" -Wait
+
+      - name: Create config.xml
+        shell: pwsh
+        run: |
+          $xml = @"
+<Configuration>
+  <Add OfficeClientEdition="64" Channel="Current">
+    <Product ID="O365ProPlusRetail">
+      <Language ID="ru-ru" />
+    </Product>
+  </Add>
+</Configuration>
+"@
+          Set-Content -Path "C:\ODT\config.xml" -Value $xml
+
+      - name: Download Office
+        run: C:\ODT\setup.exe /download C:\ODT\config.xml
+
+      - name: Archive Office
+        run: Compress-Archive -Path C:\ODT\Office -DestinationPath C:\office.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: office
+          path: C:\office.zip
