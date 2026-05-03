@@ -18,7 +18,7 @@ jobs:
 
       - name: Create config.xml
         run: |
-          Set-Content -Path "C:\ODT\config.xml" -Value @"
+          @"
 <Configuration>
   <Add OfficeClientEdition="64" Channel="Current">
     <Product ID="O365ProPlusRetail">
@@ -32,15 +32,13 @@ jobs:
   <Property Name="SendTelemetry" Value="0" />
   <ExcludeApp ID="Teams" />
 </Configuration>
-"@
+"@ | Set-Content -Path "C:\ODT\config.xml"
 
       - name: Download Office
-        run: |
-          C:\ODT\setup.exe /download C:\ODT\config.xml
+        run: C:\ODT\setup.exe /download C:\ODT\config.xml
 
       - name: Archive Office folder
-        run: |
-          Compress-Archive -Path C:\ODT\Office -DestinationPath C:\office.zip
+        run: Compress-Archive -Path C:\ODT\Office -DestinationPath C:\office.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
