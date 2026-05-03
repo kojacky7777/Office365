@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
       - name: Prepare folder
         run: mkdir C:\ODT
@@ -32,10 +33,10 @@ jobs:
       - name: Download Office
         run: C:\ODT\setup.exe /download C:\ODT\config.xml
 
-      - name: Archive
+      - name: Archive Office
         run: Compress-Archive -Path C:\ODT\Office -DestinationPath C:\office.zip
 
-      - name: Upload
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: office
