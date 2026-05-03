@@ -17,8 +17,9 @@ jobs:
           Start-Process "C:\ODT\odt.exe" -ArgumentList "/quiet /extract:C:\ODT" -Wait
 
       - name: Create config.xml
+        shell: pwsh
         run: |
-          @"
+          $xml = @"
 <Configuration>
   <Add OfficeClientEdition="64" Channel="Current">
     <Product ID="O365ProPlusRetail">
@@ -32,7 +33,8 @@ jobs:
   <Property Name="SendTelemetry" Value="0" />
   <ExcludeApp ID="Teams" />
 </Configuration>
-"@ | Set-Content -Path "C:\ODT\config.xml"
+"@
+          Set-Content -Path "C:\ODT\config.xml" -Value $xml
 
       - name: Download Office
         run: C:\ODT\setup.exe /download C:\ODT\config.xml
